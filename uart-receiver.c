@@ -25,7 +25,6 @@
 /*---------------------------------------------------------------------------*/
 static struct etimer et;
 static struct rtimer rt;
-static uint16_t counter;
 static uint8_t flag = 0;
 /*---------------------------------------------------------------------------*/
 PROCESS(cc2538_demo_process, "cc2538 demo process");
@@ -39,8 +38,6 @@ broadcast_recv(struct broadcast_conn *c, const rimeaddr_t *from)
   if (msg[0] == 'S' )
   {
     //check flag first
-    printf("Received start msg %s\n", msg);
-    printf("Set PE high\n");
     GPIO_SET_PIN(GPIO_B_BASE, 0x04);
     flag = 1;
   }
@@ -72,18 +69,19 @@ PROCESS_THREAD(cc2538_demo_process, ev, data)
 
     if(flag == 1)
     {
-      printf("Set PE low\n");
+      etimer_set(&et, CLOCK_SECOND*3);
+      PROCESS_YIELD();
+      printf("S");
+      flag = 0;
+    }
+
+    if(ev == serial_line_event_message)
+    {
+      packetbuf_copyfrom(data, strlen(data));
+      broadcast_send(&bc);
       GPIO_CLR_PIN(GPIO_B_BASE, 0x04);
       break;
     }
-  }
-
-  etimer_set(&et, CLOCK_SECOND*3);
-  PROCESS_YIELD();
-  if(ev == PROCESS_EVENT_TIMER)
-  {
-    packetbuf_copyfrom("S1234", 6);
-    broadcast_send(&bc);
   }
 
   PROCESS_END();

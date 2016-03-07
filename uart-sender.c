@@ -68,12 +68,12 @@ PROCESS_THREAD(cc2538_demo_process, ev, data)
   if(ev == PROCESS_EVENT_TIMER) {
     packetbuf_copyfrom(msg, 2);
     broadcast_send(&bc);
+    
     printf("message sent: %s\n", msg);
   }
 
 
   while(1) {
-    printf("waiting...\n");
     etimer_set(&et, CLOCK_SECOND);
 
     PROCESS_YIELD();
