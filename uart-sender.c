@@ -35,10 +35,7 @@ broadcast_recv(struct broadcast_conn *c, const rimeaddr_t *from)
 {
   char *msg = packetbuf_dataptr();
 
-  if(msg[0] == 'S')
-  {
-    printf("Received msg: %s\n", msg); 
-  }
+  printf("Received msg: %s\n", msg); 
 }
 /*---------------------------------------------------------------------------*/
 static const struct broadcast_callbacks bc_rx = { broadcast_recv };

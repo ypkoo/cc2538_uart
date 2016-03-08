@@ -38,7 +38,7 @@ broadcast_recv(struct broadcast_conn *c, const rimeaddr_t *from)
   if (msg[0] == 'S' )
   {
     //check flag first
-    GPIO_SET_PIN(GPIO_B_BASE, 0x04);
+    GPIO_SET_PIN(GPIO_B_BASE, 0x08);
     flag = 1;
   }
 }
@@ -60,6 +60,8 @@ PROCESS_THREAD(cc2538_demo_process, ev, data)
   PROCESS_BEGIN();
   //gpio_init();
 
+  GPIO_SET_OUTPUT(GPIO_B_BASE, 0x08);
+  GPIO_CLR_PIN(GPIO_B_BASE, 0x08);
   broadcast_open(&bc, BROADCAST_CHANNEL, &bc_rx);
 
   while(1) {
@@ -79,8 +81,7 @@ PROCESS_THREAD(cc2538_demo_process, ev, data)
     {
       packetbuf_copyfrom(data, strlen(data));
       broadcast_send(&bc);
-      GPIO_CLR_PIN(GPIO_B_BASE, 0x04);
-      break;
+      GPIO_CLR_PIN(GPIO_B_BASE, 0x08);
     }
   }
 
